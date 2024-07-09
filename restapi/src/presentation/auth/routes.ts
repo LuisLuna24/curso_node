@@ -1,8 +1,11 @@
 import { Request, Response, Router } from "express";
+import { AuthController } from "./controller";
 
 export class AuthRoutes {
     static get routes(): Router {
         const router = Router();
+        const contrller = new AuthController();
+
 
         //^GET - Obtener informacion
         //^POST -Mandar informacion
@@ -10,23 +13,23 @@ export class AuthRoutes {
         //^DELETE - Eliminar informacion
 
         //&Login -
-        router.post('/login', (req: Request, res: Response) => {
+        router.post('/login',(req: Request, res: Response) => {
             res.json({
-                msg:'Usuario Registrado Correctamente'
+                msg: 'Usuario logeado Correctamente'
             });
         })
 
         //&Reniu -
         router.get('/renew', (req: Request, res: Response) => {
             res.json({
-                msg:'Usuario renovado correctamente'
+                msg:'Usuario renovado'
             });
         })
 
         //&Register -
         router.post('/register', (req: Request, res: Response) => {
             res.json({
-               
+                msg:'Usuario registrado'
             });
         })
 
