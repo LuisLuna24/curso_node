@@ -1,10 +1,14 @@
 import { Request, Response, Router } from "express";
 import { AuthController } from "./controller";
+import { AuthDatasourceImpl } from "../../infrastructure/datasources/auth.datasource.impl";
+import { AuthRepositoryImp } from "../../infrastructure/repositories/auth.repository.impl";
 
 export class AuthRoutes {
     static get routes(): Router {
         const router = Router();
-        const contrller = new AuthController();
+        const datasource = new AuthDatasourceImpl();
+        const repository = new AuthRepositoryImp(datasource);
+        const contrller = new AuthController(repository);
 
 
         //^GET - Obtener informacion
@@ -13,27 +17,13 @@ export class AuthRoutes {
         //^DELETE - Eliminar informacion
 
         //&Login -
-        router.post('/login',(req: Request, res: Response) => {
-            res.json({
-                msg: 'Usuario logeado Correctamente'
-            });
-        })
+        router.post('/login', contrller.loginUser)
 
         //&Reniu -
-        router.get('/renew', (req: Request, res: Response) => {
-            res.json({
-                msg:'Usuario renovado'
-            });
-        })
+        router.get('/renew', contrller.renewUser)
 
         //&Register -
-        router.post('/register', (req: Request, res: Response) => {
-            res.json({
-                msg:'Usuario registrado'
-            });
-        })
-
-        
+        router.post('/register', contrller.registerUser)
 
         return router;
     }

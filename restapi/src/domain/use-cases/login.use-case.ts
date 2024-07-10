@@ -13,10 +13,11 @@ interface LoginUseCase{
 
 export class LoginUser implements LoginUseCase {
     constructor (
-        private readonly authRepository: AuthRepository;
+        private readonly authRepository: AuthRepository,
     ){}
 
     async execute(LoginUserDto: LoginUserDto): Promise<UserToken> {
+        
         const user = await this.authRepository.login(LoginUserDto);
 
         return {

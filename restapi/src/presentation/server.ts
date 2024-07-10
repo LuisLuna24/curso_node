@@ -1,4 +1,5 @@
 import express, { Router } from "express";
+import cors from "cors";
 import path from "path";
 
 interface Options {
@@ -22,22 +23,23 @@ export class Server {
     }
 
     async start() {
-        //middleware
+        //^middleware
         this.app.use(express.json());
+        this.app.use(cors());
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(express.static(this.publicPath));
 
-        //routes
+        //^routes
         this.app.use(this.routes);
 
-        //SPA
+        //^SPA
         this.app.get('*', (req, res) => {
             //res.sendFile(`${this.publicPath}/index.html`);
             const indextPath = path.join(__dirname + `../../../${this.publicPath}/index.html`);
             res.sendFile(indextPath);
         });
 
-        //start server
+        //^start server
         this.app.listen(this.port, () => {
             console.log(`Server is running at http://localhost:${this.port}`);
         });

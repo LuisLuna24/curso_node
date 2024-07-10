@@ -1,9 +1,13 @@
-import { Response } from "express";
-import { CustomError } from "../../domain";
+import { Response,Request } from "express";
+import { CustomError, LoginUserDto, LoginUser, AuthRepository } from "../../domain";
+
 
 export class AuthController {
-    constructor() {
+    constructor(
+        private readonly authRepository: AuthRepository,
+    ) {
         //todo: Controlador de dependencias
+        
     }
 
     private handleError = (error: unknown, res: Response) => {
@@ -18,9 +22,32 @@ export class AuthController {
         });
     }
 
-    /*loginUser = async(req: Request, res: Response) => {
+    loginUser = async(req: Request, res: Response) => {
+
+        const [error,loginUserDto] = LoginUserDto.create(req.body);
+
+        if(error) return res.status(400).json({ error });
+        console.log(loginUserDto);
+
+        /*res.json({
+            msg: error
+        });*/
+        new LoginUser(this.authRepository)
+            .execute(loginUserDto!)
+            .then(data => res.json(data))
+            .catch(error =>this.handleError(error, res));
+    }
+
+    renewUser= async(req: Request, res: Response) => {
         res.json({
-            msg: 'Usuario logeado Correctamente'
+            msg:'Usuario renovado'
         });
-    }*/
+    }
+
+    registerUser= async(req: Request, res: Response) => {
+        res.json({
+            msg:'Usuario registrado'
+        });
+    }
+
 }

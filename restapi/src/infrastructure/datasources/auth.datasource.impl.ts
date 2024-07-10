@@ -1,9 +1,14 @@
-import { AuthDatasource } from "../../domain/datasource/auth.datasource";
-import { LoginUserDto } from "../../domain/dtos/auth/login-user.dto";
-import { UserEntity } from "../../domain/entities/user.entity";
+import { userData } from "../../data/data";
+import { AuthDatasource, CustomError, LoginUserDto, UserEntity } from "../../domain";
+import { UserMapper } from "../mappers/user.mapper";
 
 export class AuthDatasourceImpl implements AuthDatasource {
-    login(LoginUserDto: LoginUserDto): Promise<UserEntity> {
-        throw new Error("Method not implemented.");
+    async login(loginUserDto: LoginUserDto): Promise<UserEntity> {
+
+        const { email, password } = loginUserDto;
+        const user = userData.find(user => user.email === email && user.password === password);
+        if (!user) throw CustomError.badRequest('User not found');
+
+        return UserMapper.userEntityFromObject(user);
     }
 }
