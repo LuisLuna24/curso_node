@@ -1,5 +1,7 @@
-import { Response,Request } from "express";
-import { CustomError, LoginUserDto, LoginUser, AuthRepository } from "../../domain";
+import { Response, Request } from "express";
+import { CustomError, LoginUserDto, LoginUser, AuthRepository, RegisterUserDto, RegisterUser } from "../../domain";
+import { userData } from "../../data/data";
+import { RenewUser } from "../../domain/use-cases/renew.use-case";
 
 
 export class AuthController {
@@ -7,7 +9,7 @@ export class AuthController {
         private readonly authRepository: AuthRepository,
     ) {
         //todo: Controlador de dependencias
-        
+
     }
 
     private handleError = (error: unknown, res: Response) => {
@@ -22,12 +24,12 @@ export class AuthController {
         });
     }
 
-    loginUser = async(req: Request, res: Response) => {
+    loginUser = async (req: Request, res: Response) => {
 
-        const [error,loginUserDto] = LoginUserDto.create(req.body);
+        const [error, loginUserDto] = LoginUserDto.create(req.body);
 
-        if(error) return res.status(400).json({ error });
-        console.log(loginUserDto);
+        if (error) return res.status(400).json({ error });
+
 
         /*res.json({
             msg: error
@@ -35,19 +37,37 @@ export class AuthController {
         new LoginUser(this.authRepository)
             .execute(loginUserDto!)
             .then(data => res.json(data))
-            .catch(error =>this.handleError(error, res));
+            .catch(error => this.handleError(error, res));
     }
 
-    renewUser= async(req: Request, res: Response) => {
-        res.json({
-            msg:'Usuario renovado'
-        });
+    //Registro
+    registerUser = async (req: Request, res: Response) => {
+
+        const [error, registerUserDto] = RegisterUserDto.create(req.body);
+        if (error) return res.status(400).json({ error });
+
+        /*res.json({
+            msg: error
+        });*/
+        new RegisterUser(this.authRepository)
+            .execute(registerUserDto!)
+            .then(data => res.json(data))
+            .catch(error => this.handleError(error, res));
+        console.log(userData);
+
     }
 
-    registerUser= async(req: Request, res: Response) => {
-        res.json({
-            msg:'Usuario registrado'
-        });
+    renewUser = async (req: Request, res: Response) => {
+
+        const user = req.body.user;
+
+
+        new RenewUser()
+            .execute(user)
+            .then(data => res.json(data))
+            .catch(error => this.handleError(error, res));
     }
+
+
 
 }

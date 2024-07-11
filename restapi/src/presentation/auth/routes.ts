@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import { AuthController } from "./controller";
 import { AuthDatasourceImpl } from "../../infrastructure/datasources/auth.datasource.impl";
 import { AuthRepositoryImp } from "../../infrastructure/repositories/auth.repository.impl";
+import { AuthMiddleware } from "../middlewares/auth.middleware";
 
 export class AuthRoutes {
     static get routes(): Router {
@@ -17,13 +18,13 @@ export class AuthRoutes {
         //^DELETE - Eliminar informacion
 
         //&Login -
-        router.post('/login', contrller.loginUser)
+        router.post('/login', contrller.loginUser);
 
         //&Reniu -
-        router.get('/renew', contrller.renewUser)
+        router.get('/renew',[AuthMiddleware.ValidateJTW], contrller.renewUser);
 
         //&Register -
-        router.post('/register', contrller.registerUser)
+        router.post('/register' ,contrller.registerUser);
 
         return router;
     }
