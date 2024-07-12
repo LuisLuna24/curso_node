@@ -52,20 +52,34 @@ export class AuthDBDatasourceImpl implements AuthDBDatasource {
     async login(loginUserDto: LoginUserDto): Promise<UserEntity> {
 
         const { email, password } = loginUserDto;
-        //const user = userData.find(user => user.email === email && user.password === password);
-        const user = await prisma.users.findFirst({
-            where: {
-                email: email,
-            }
-        });
-        if (user) {
-            this.compareFunction(password, user.password) || this.hashPassword(password);
+        
+        try {
+            const user = await prisma.users.findFirst({
+                where:{
+                    email : email
+                }
+            })
 
+            if(!user) throw CustomError.badRequest('User not exist');
+
+            const isMatching = this.compareFunction(password, user.password);
+
+            if(!isMatching) throw CustomError.badRequest('An error ocurred while satrt session');
+
+            return UserMapper.userEntityFromObject(user);
+
+        } catch (error) {
+
+            console.log(error);
+            if(error instanceof CustomError){
+                throw error;
+            }
+            
+            throw CustomError.internalServerError();
         }
 
-        if (!user) throw CustomError.badRequest('User not found');
 
-        return UserMapper.userEntityFromObject(user);
+        
     }
 
     //REgistro de usuarios
