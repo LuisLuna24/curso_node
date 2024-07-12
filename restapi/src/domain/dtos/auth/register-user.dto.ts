@@ -4,7 +4,7 @@ export class RegisterUserDto {
     constructor(
         public readonly name_user: string, 
         public readonly email: string,
-        public readonly password: string,
+        public password: string,
         public readonly role:StatusRole = StatusRole.user
     ) { }
 

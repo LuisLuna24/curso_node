@@ -20,6 +20,7 @@ export class AuthDatasourceImpl implements AuthDatasource {
 
         const exixtUser = userData.find(user=>user.email===email);
         if(exixtUser) throw CustomError.badRequest("Email already registered");
+        
         const newUser = {
             id: new Date().getTime(),
             name_user,
